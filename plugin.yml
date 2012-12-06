@@ -1,7 +1,7 @@
-name: SignLift
-main: au.net.fremnet.bukkit.SignLift.SignLift
-website: http://fremnet.net/
-version: 1.22
+name: ImprovedSignLift
+main: com.minecraftserver.improvedsignlift.ImprovedSignLift
+website: http://minecraftserver.com/
+version: 1.00
 permissions:
     signlift.*:
         description: Gives access to all SignLift privileges
@@ -22,8 +22,8 @@ permissions:
     signlift.create.private.own:
         description: Permits the creation of private sign lifts with the PRIVATE tag
         default: true
-    signlift.create.private.others:
-        description: Permits the creation of private sign lifts for other users
+    signlift.modify.private.member:
+        description: Permits the modification of private sign lifts (adding/removing member)
         default: true
     signlift.use.normal:
         description: Permits the use of any normal sign lift
@@ -32,5 +32,5 @@ permissions:
         description: Permits the use of any private sign lift made for this user
         default: true
     signlift.use.private.others:
-        description: Permits the use of other users private lifts
+        description: Permits the use of any private sign lift where player is member
         default: op
