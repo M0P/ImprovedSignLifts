@@ -1,0 +1,36 @@
+name: SignLift
+main: au.net.fremnet.bukkit.SignLift.SignLift
+website: http://fremnet.net/
+version: 1.22
+permissions:
+    signlift.*:
+        description: Gives access to all SignLift privileges
+        children:
+            signlift.create.*: true
+            signlift.use.normal: true
+            signlift.use.private.own: true
+            signlift.use.private.other: true 
+    signlift.create.*:
+        description: Gives access to all SignLift create privileges
+        children:
+            signlift.create.normal: true
+            signlift.create.private.own: true
+            signlift.create.private.other: true
+    signlift.create.normal:
+        description: Permits the creation of a normal sign lifts for anyone to use
+        default: true
+    signlift.create.private.own:
+        description: Permits the creation of private sign lifts with the PRIVATE tag
+        default: true
+    signlift.create.private.others:
+        description: Permits the creation of private sign lifts for other users
+        default: true
+    signlift.use.normal:
+        description: Permits the use of any normal sign lift
+        default: true
+    signlift.use.private.own:
+        description: Permits the use of any private sign lift made for this user
+        default: true
+    signlift.use.private.others:
+        description: Permits the use of other users private lifts
+        default: op
