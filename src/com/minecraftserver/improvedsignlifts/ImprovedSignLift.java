@@ -1,11 +1,17 @@
 package com.minecraftserver.improvedsignlifts;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -14,7 +20,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * SignLift for Bukkit
- * 
  */
 public class ImprovedSignLift extends JavaPlugin {
     protected final static Logger        logger         = Logger.getLogger("Minecraft");
@@ -40,6 +45,7 @@ public class ImprovedSignLift extends JavaPlugin {
     private String                       deniedDestroy;
 
     private Boolean                      sanityCheck;
+    private HashMap<String, Location>    signEditStatus = new HashMap<String, Location>();
 
     public void loadConfiguration() {
         FileConfiguration cfg = this.getConfig();
@@ -138,7 +144,7 @@ public class ImprovedSignLift extends JavaPlugin {
     }
 
     public boolean isBlockSignLift(Block block) {
-        if (block.getType() == Material.SIGN||block.getType() == Material.WALL_SIGN) {
+        if (block.getType() == Material.SIGN || block.getType() == Material.WALL_SIGN) {
             Sign sign = (Sign) block;
             String lineLift = sign.getLine(1).toString();
             String lineOwner = sign.getLine(3).toString();
@@ -151,6 +157,10 @@ public class ImprovedSignLift extends JavaPlugin {
         return false;
     }
 
+    /**
+     * @param block
+     * @return if the lift is private
+     */
     public boolean isSignLiftPrivate(Block block) {
         Sign sign = (Sign) block;
         String lineLift = sign.getLine(1).toString();
@@ -158,11 +168,72 @@ public class ImprovedSignLift extends JavaPlugin {
             return true;
         return false;
     }
-    
+
     public void executeSignLiftAction(Sign sign, Player player) {
-        LiftSign ls=new LiftSign(sign);
+        LiftSign ls = new LiftSign(sign);
         ls.activate(player);
     }
+
+    public void addSignEditStatus(final Player player, final Sign sign) {
+        if (signEditStatus.containsKey(player.getName()))
+            signEditStatus.remove(player.getName());
+        else signEditStatus.put(player.getName(), sign.getLocation());
+        this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+            @Override
+            public void run() {
+                remSignEditStatus(player, sign);
+            }
+        }, 1200L);
+        // 20=1 sec
+    }
+
+    public void remSignEditStatus(Player player, Sign sign) {
+        if (signEditStatus.containsValue(sign.getLocation()))
+            signEditStatus.remove(player.getName());
+    }
+
+    public boolean hasPlayerSignEditStatus(Player player) {
+        return signEditStatus.containsKey(player.getName());
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.bukkit.plugin.java.JavaPlugin#onCommand(org.bukkit.command.CommandSender
+     * , org.bukkit.command.Command, java.lang.String, java.lang.String[])
+     */
+
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            if (cmd.getName().equalsIgnoreCase("sl"))
+                if (hasPlayerSignEditStatus(player)) {
+                    Location loc = signEditStatus.get(player.getName());
+                    if (args.length != 0) {
+                        if (args[0].equals("add")) {
+                            if (args.length > 1)
+                                for (String s : args)
+                                    if (!s.equals(args[0]))
+                                        LiftDataManager.addMemberToLift(loc, player.getName(), s);
+
+                        } else if (args[0].equals("rem")||args[0].equals("remove")) {
+                            if (args.length > 1)
+                                for (String s : args)
+                                    if (!s.equals(args[0]))
+                                        LiftDataManager.remMemberFromLift(loc, player.getName(), s);
+
+                        }
+                    }
+                } else player.sendMessage("You have to select a sign lift first");
+
+        }
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.bukkit.plugin.java.JavaPlugin#onEnable()
+     */
 
     @Override
     public void onEnable() {

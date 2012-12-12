@@ -1,5 +1,7 @@
 package com.minecraftserver.improvedsignlifts;
 
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -32,14 +34,32 @@ public class SignLiftPlayerListener implements Listener {
                 block = block.getRelative(face, 2);
                 if (plugin.isBlockSignLift(block))
                     plugin.executeSignLiftAction((Sign) block, event.getPlayer());
-            }
-            else if(event.getClickedBlock().getType()==Material.SIGN||event.getClickedBlock().getType()==Material.WALL_SIGN){
-                Block block=event.getClickedBlock();
-                if (plugin.isBlockSignLift(block))
-                    plugin.executeSignLiftAction((Sign) block, event.getPlayer());
-                
+            } else if (event.getClickedBlock().getType() == Material.SIGN
+                    || event.getClickedBlock().getType() == Material.WALL_SIGN) {
+                Block block = event.getClickedBlock();
+                if (plugin.isBlockSignLift(block)) {
+                    Sign sign = (Sign) block;
+                    if (!event.getPlayer().isSneaking())
+                        plugin.executeSignLiftAction(sign, event.getPlayer());
+                    else {
+                        Player player = event.getPlayer();
+                        if (plugin.shortPlayerName(player.getName()).equals(
+                                sign.getLine(3).toString())) {
+                            //TODO
+                            player.sendMessage("Sign Lift Edit Mode");
+                            List <String> memberList=LiftDataManager.getMembersOfLift(sign.getLocation(), player.getName());
+                            //List to string
+                            String members="";
+                            for(String s:memberList)
+                                members+=" "+s;
+                            player.sendMessage("Currently allowed players:"+members);
+                            player.sendMessage("Use /sl add or /sl remove to modify the members");
+                            plugin.addSignEditStatus(player, sign);
+                        }
+                        else player.sendMessage("You dont have permission to edit this lift");
+                    }
+                }
             }
         }
     }
-
 }

@@ -1,7 +1,7 @@
 name: ImprovedSignLift
 main: com.minecraftserver.improvedsignlift.ImprovedSignLift
 website: http://minecraftserver.com/
-version: 1.00
+version: 1.00 Beta 1
 permissions:
     signlift.*:
         description: Gives access to all SignLift privileges
