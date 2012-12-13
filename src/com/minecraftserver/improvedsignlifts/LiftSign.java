@@ -66,6 +66,7 @@ public class LiftSign {
         } else if (lineDirection.startsWith(plugin.getPrivateOpen())
                 && lineDirection.endsWith(plugin.getPrivateClose())) {
             this.owner = this.sign.getLine(3);
+            this.isPrivate = true;
         }
 
         // Remove the prefix and suffix
@@ -104,7 +105,7 @@ public class LiftSign {
     public boolean checkAllowed(Player player) {
         Bukkit.broadcastMessage("Perm check");
         Location signLocation = this.sign.getLocation();
-        //TODO check if lift is private is broken
+        // TODO check if lift is private is broken
         Bukkit.broadcastMessage("Private " + (isPrivate) + " Perm (use.normal) "
                 + player.hasPermission("signlift.use.normal"));
         if ((!isPrivate && player.hasPermission("signlift.use.normal")) || player.isOp())
@@ -113,7 +114,7 @@ public class LiftSign {
         Bukkit.broadcastMessage("Name " + player.getName() + " Perm (use.own) "
                 + player.hasPermission("signlift.use.own") + " Perm (use.own) "
                 + player.hasPermission("signlift.use.other"));
-        if (owner.equalsIgnoreCase(playerName)) {
+        if (owner.equalsIgnoreCase(plugin.shortPlayerName(playerName))) {
 
             Bukkit.broadcastMessage(player.getName() + " is owner of lift");
             return player.hasPermission("signlift.use.private.own");
