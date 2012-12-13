@@ -15,6 +15,7 @@
 
 package com.minecraftserver.improvedsignlifts;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -53,10 +54,11 @@ public class LiftSign {
         plugin = parent;
     }
 
-    public LiftSign(Sign sign) {
+    public LiftSign(Sign sign, ImprovedSignLift plugin) {
+        this.plugin = plugin;
         this.sign = sign;
-
-        String lineDirection = this.sign.getLine(1).toString();
+        Bukkit.broadcastMessage(this.sign.getLine(1));
+        String lineDirection = this.sign.getLine(1);
 
         if (lineDirection.startsWith(plugin.getNormalOpen())
                 && lineDirection.endsWith(plugin.getNormalClose())) {
@@ -100,14 +102,25 @@ public class LiftSign {
     }
 
     public boolean checkAllowed(Player player) {
+        Bukkit.broadcastMessage("Perm check");
         Location signLocation = this.sign.getLocation();
+        //TODO check if lift is private is broken
+        Bukkit.broadcastMessage("Private " + (isPrivate) + " Perm (use.normal) "
+                + player.hasPermission("signlift.use.normal"));
         if ((!isPrivate && player.hasPermission("signlift.use.normal")) || player.isOp())
             return true;
         String playerName = player.getName();
-        if (owner.equalsIgnoreCase(playerName))
+        Bukkit.broadcastMessage("Name " + player.getName() + " Perm (use.own) "
+                + player.hasPermission("signlift.use.own") + " Perm (use.own) "
+                + player.hasPermission("signlift.use.other"));
+        if (owner.equalsIgnoreCase(playerName)) {
+
+            Bukkit.broadcastMessage(player.getName() + " is owner of lift");
             return player.hasPermission("signlift.use.private.own");
-        else if (LiftDataManager.isMemberOfLift(signLocation, owner, player.getName()))
+        } else if (LiftDataManager.isMemberOfLift(signLocation, owner, player.getName())) {
+            Bukkit.broadcastMessage(player.getName() + " is member of lift");
             return player.hasPermission("signlift.use.private.other");
+        }
         return false;
     }
 
@@ -225,7 +238,7 @@ public class LiftSign {
                     if (line.equalsIgnoreCase(plugin.getLiftString())
                             || line.equalsIgnoreCase(plugin.getLiftUpString())
                             || line.equalsIgnoreCase(plugin.getLiftDownString())) {
-                        return new LiftSign((Sign) blockState);
+                        return new LiftSign((Sign) blockState, plugin);
                     }
                 }
             }

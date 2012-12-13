@@ -1,7 +1,10 @@
 name: ImprovedSignLift
-main: com.minecraftserver.improvedsignlift.ImprovedSignLift
-website: http://minecraftserver.com/
-version: 1.00 Beta 1
+main: com.minecraftserver.improvedsignlifts.ImprovedSignLift
+website: http://www.minecraftserver.com/
+version: 1.00 Beta 18
+commands:
+    sl:
+    
 permissions:
     signlift.*:
         description: Gives access to all SignLift privileges

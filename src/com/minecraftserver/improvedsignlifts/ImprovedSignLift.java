@@ -6,6 +6,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -145,12 +146,13 @@ public class ImprovedSignLift extends JavaPlugin {
 
     public boolean isBlockSignLift(Block block) {
         if (block.getType() == Material.SIGN || block.getType() == Material.WALL_SIGN) {
-            Sign sign = (Sign) block;
+            Sign sign = (Sign) block.getState();
             String lineLift = sign.getLine(1).toString();
             String lineOwner = sign.getLine(3).toString();
             if (((lineLift.startsWith(getNormalOpen()) && lineLift.endsWith(getNormalClose())) || (lineLift
                     .startsWith(getPrivateOpen()) && lineLift.endsWith(getPrivateClose())))
                     && lineOwner.length() > 0) {
+                Bukkit.broadcastMessage("Block is sign lift");
                 return true;
             }
         }
@@ -162,7 +164,7 @@ public class ImprovedSignLift extends JavaPlugin {
      * @return if the lift is private
      */
     public boolean isSignLiftPrivate(Block block) {
-        Sign sign = (Sign) block;
+        Sign sign = (Sign) block.getState();
         String lineLift = sign.getLine(1).toString();
         if ((lineLift.startsWith(getPrivateOpen()) && lineLift.endsWith(getPrivateClose())))
             return true;
@@ -170,7 +172,8 @@ public class ImprovedSignLift extends JavaPlugin {
     }
 
     public void executeSignLiftAction(Sign sign, Player player) {
-        LiftSign ls = new LiftSign(sign);
+        Bukkit.broadcastMessage("Execute Action");
+        LiftSign ls = new LiftSign(sign, this);
         ls.activate(player);
     }
 
@@ -211,12 +214,12 @@ public class ImprovedSignLift extends JavaPlugin {
                     Location loc = signEditStatus.get(player.getName());
                     if (args.length != 0) {
                         if (args[0].equals("add")) {
-                            if (args.length > 1)
-                                for (String s : args)
-                                    if (!s.equals(args[0]))
-                                        LiftDataManager.addMemberToLift(loc, player.getName(), s);
-
-                        } else if (args[0].equals("rem")||args[0].equals("remove")) {
+                            if (args.length > 1) for (String s : args)
+                                if (!s.equals(args[0])) {
+                                    LiftDataManager.addMemberToLift(loc, player.getName(), s);
+                                    player.chat("added player: " + s);
+                                }
+                        } else if (args[0].equals("rem") || args[0].equals("remove")) {
                             if (args.length > 1)
                                 for (String s : args)
                                     if (!s.equals(args[0]))
