@@ -3,6 +3,7 @@ package com.minecraftserver.improvedsignlifts;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -48,17 +49,20 @@ public class SignLiftPlayerListener implements Listener {
                                 sign.getLine(3).toString())
                                 && plugin.isSignLiftPrivate(block)) {
                             // TODO
-                            player.sendMessage("Sign Lift Edit Mode");
+                            player.sendMessage(ChatColor.BLUE + "Sign Lift Edit Mode");
                             List<String> memberList = LiftDataManager.getMembersOfLift(
                                     sign.getLocation(), player.getName());
                             // List to string
                             String members = "";
                             if (memberList != null) for (String s : memberList)
                                 members += " " + s;
-                            player.sendMessage("Currently allowed players:" + members);
-                            player.sendMessage("Use /sl add or /sl remove to modify the members");
+                            player.sendMessage(ChatColor.BLUE + "Currently allowed players:"
+                                    + ChatColor.GOLD + members);
+                            player.sendMessage(ChatColor.BLUE + "Use" + ChatColor.GOLD + " /sl add"
+                                    + ChatColor.BLUE + " or" + ChatColor.GOLD + " /sl remove"
+                                    + ChatColor.BLUE + " to modify the members");
                             plugin.addSignEditStatus(player, sign);
-                        } else player.sendMessage("You dont have permission to edit this lift");
+                        } else player.sendMessage(ChatColor.RED+"You dont have permission to edit this lift");
                     }
                 }
             }

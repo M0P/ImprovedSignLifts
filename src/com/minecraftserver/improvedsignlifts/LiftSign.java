@@ -16,6 +16,7 @@
 package com.minecraftserver.improvedsignlifts;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -57,7 +58,6 @@ public class LiftSign {
     public LiftSign(Sign sign, ImprovedSignLift plugin) {
         this.plugin = plugin;
         this.sign = sign;
-        Bukkit.broadcastMessage(this.sign.getLine(1));
         String lineDirection = this.sign.getLine(1);
 
         if (lineDirection.startsWith(plugin.getNormalOpen())
@@ -103,23 +103,13 @@ public class LiftSign {
     }
 
     public boolean checkAllowed(Player player) {
-        Bukkit.broadcastMessage("Perm check");
         Location signLocation = this.sign.getLocation();
-        // TODO check if lift is private is broken
-        Bukkit.broadcastMessage("Private " + (isPrivate) + " Perm (use.normal) "
-                + player.hasPermission("signlift.use.normal"));
-        if ((!isPrivate && player.hasPermission("signlift.use.normal")) || player.isOp())
-            return true;
+        if ((!isPrivate && player.hasPermission("signlift.use.normal")) || player.isOp()
+                || player.hasPermission("signlift.use.all")) return true;
         String playerName = player.getName();
-        Bukkit.broadcastMessage("Name " + player.getName() + " Perm (use.own) "
-                + player.hasPermission("signlift.use.own") + " Perm (use.own) "
-                + player.hasPermission("signlift.use.other"));
         if (owner.equalsIgnoreCase(plugin.shortPlayerName(playerName))) {
-
-            Bukkit.broadcastMessage(player.getName() + " is owner of lift");
             return player.hasPermission("signlift.use.private.own");
         } else if (LiftDataManager.isMemberOfLift(signLocation, owner, player.getName())) {
-            Bukkit.broadcastMessage(player.getName() + " is member of lift");
             return player.hasPermission("signlift.use.private.other");
         }
         return false;
@@ -129,16 +119,22 @@ public class LiftSign {
         if (this.direction == Direction.NONE) {
             return false;
         }
-
-        LiftSign target = this.findSign();
-
-        if (target == null) return false;
-
-        if (!(this.checkAllowed(player) && target.checkAllowed(player))) {
+        if (!this.checkAllowed(player)) {
             player.sendMessage(plugin.getDeniedLift());
             return false;
         }
+        int skipSigns = 0;
         Location loc = player.getLocation();
+        LiftSign target = this.findSign(skipSigns);
+        if (target == null) return false;
+        while (target != null && !(target.checkAllowed(player))) {
+            skipSigns++;
+            target = this.findSign(skipSigns);
+        }
+        if (target == null) {
+            player.sendMessage(plugin.getDeniedLift());
+            return false;
+        }
         String destination = target.getLabel();
         String message;
         if (destination.equals("")) {
@@ -147,7 +143,7 @@ public class LiftSign {
         } else {
             message = String.format(
                     this.direction == Direction.UP ? plugin.getGoingUpStringFormat() : plugin
-                            .getGoingDownStringFormat(), destination);
+                            .getGoingDownStringFormat(), ChatColor.GOLD + destination);
         }
 
         Block block0 = target.getTargetBlock(loc, 0);
@@ -214,7 +210,8 @@ public class LiftSign {
         }
     }
 
-    private LiftSign findSign() {
+    private LiftSign findSign(int skipSigns) {
+        int signCounter = 0;
         World world = this.sign.getWorld();
         int x = this.sign.getX(), y = this.sign.getY(), z = this.sign.getZ();
         int d;
@@ -239,7 +236,9 @@ public class LiftSign {
                     if (line.equalsIgnoreCase(plugin.getLiftString())
                             || line.equalsIgnoreCase(plugin.getLiftUpString())
                             || line.equalsIgnoreCase(plugin.getLiftDownString())) {
-                        return new LiftSign((Sign) blockState, plugin);
+                        if (signCounter == skipSigns)
+                            return new LiftSign((Sign) blockState, plugin);
+                        signCounter++;
                     }
                 }
             }

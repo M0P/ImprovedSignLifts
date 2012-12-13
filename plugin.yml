@@ -1,7 +1,7 @@
 name: ImprovedSignLift
 main: com.minecraftserver.improvedsignlifts.ImprovedSignLift
 website: http://www.minecraftserver.com/
-version: 1.00 Beta 19
+version: 1.00
 commands:
     sl:
     
@@ -36,4 +36,7 @@ permissions:
         default: true
     signlift.use.private.others:
         description: Permits the use of any private sign lift where player is member
+        default: true
+    signlift.use.all:
+        description: Permits the use of any sign lift
         default: op

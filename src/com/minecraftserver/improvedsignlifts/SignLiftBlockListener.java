@@ -137,7 +137,7 @@ public class SignLiftBlockListener implements Listener {
     }
 
     private boolean canBreakBlock(Block block, Player player) {
-        Sign sign = (Sign) block;
+        Sign sign = (Sign) block.getState();
         String lineOwner = sign.getLine(3).toString();
         if (lineOwner.equals(plugin.shortPlayerName(player.getName()))) {
             return true;

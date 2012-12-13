@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -58,16 +59,13 @@ public class ImprovedSignLift extends JavaPlugin {
         liftString = cfg.getString("string.lift", "LIFT");
         liftUpString = cfg.getString("string.up.lift", "LIFT UP");
         liftDownString = cfg.getString("string.down.lift", "LIFT DOWN");
-        defaultGoingUpString = cfg.getString("string.up.default", "Going Up");
-        defaultGoingDownString = cfg.getString("string.down.default", "Going Down");
-        goingUpStringFormat = cfg.getString("string.up.format", "Going to %s");
-        goingDownStringFormat = cfg.getString("string.down.format", "Going to %s");
-        deniedLift = cfg.getString("string.message.lift.denied",
-                "You don't have permission to use this lift");
-        deniedCreate = cfg.getString("string.message.create.denied",
-                "You don't have permission to create that sign lift");
-        deniedDestroy = cfg.getString("string.message.destroy.denied",
-                "You don't have permission to destroy that sign lift");
+        defaultGoingUpString = ChatColor.BLUE + "Going Up";
+        defaultGoingDownString = ChatColor.BLUE + "Going Down";
+        goingUpStringFormat = ChatColor.BLUE + "Going to %s";
+        goingDownStringFormat = ChatColor.BLUE + "Going to %s";
+        deniedLift = ChatColor.RED + "You don't have permission to use this lift";
+        deniedCreate = ChatColor.RED + "You don't have permission to create that sign lift";
+        deniedDestroy = ChatColor.RED + "You don't have permission to destroy that sign lift";
 
         sanityCheck = cfg.getBoolean("check.destination.paranoid", true);
 
@@ -152,7 +150,6 @@ public class ImprovedSignLift extends JavaPlugin {
             if (((lineLift.startsWith(getNormalOpen()) && lineLift.endsWith(getNormalClose())) || (lineLift
                     .startsWith(getPrivateOpen()) && lineLift.endsWith(getPrivateClose())))
                     && lineOwner.length() > 0) {
-                Bukkit.broadcastMessage("Block is sign lift");
                 return true;
             }
         }
@@ -172,7 +169,6 @@ public class ImprovedSignLift extends JavaPlugin {
     }
 
     public void executeSignLiftAction(Sign sign, Player player) {
-        Bukkit.broadcastMessage("Execute Action");
         LiftSign ls = new LiftSign(sign, this);
         ls.activate(player);
     }
@@ -214,20 +210,39 @@ public class ImprovedSignLift extends JavaPlugin {
                     Location loc = signEditStatus.get(player.getName());
                     if (args.length != 0) {
                         if (args[0].equals("add")) {
-                            if (args.length > 1) for (String s : args)
-                                if (!s.equals(args[0])) {
-                                    LiftDataManager.addMemberToLift(loc, player.getName(), s);
-                                    player.chat("added player: " + s);
-                                }
-                        } else if (args[0].equals("rem") || args[0].equals("remove")) {
-                            if (args.length > 1)
+                            if (args.length > 1) {
                                 for (String s : args)
-                                    if (!s.equals(args[0]))
+                                    if (!s.equals(args[0])) {
+                                        LiftDataManager.addMemberToLift(loc, player.getName(), s);
+                                        player.sendMessage(ChatColor.GOLD + s + ChatColor.BLUE
+                                                + " has been added to the lift");
+                                    }
+                            } else player.sendMessage(ChatColor.AQUA
+                                    + "Usage: /sl add <Player1> <Player2> <Player3> ...");
+                        } else if (args[0].equals("rem") || args[0].equals("remove")) {
+                            if (args.length > 1) {
+                                for (String s : args)
+                                    if (!s.equals(args[0])) {
                                         LiftDataManager.remMemberFromLift(loc, player.getName(), s);
-
+                                        player.sendMessage(ChatColor.GOLD + s + ChatColor.BLUE
+                                                + " has been removed from the lift");
+                                    }
+                            } else player.sendMessage(ChatColor.AQUA
+                                    + "Usage: /sl remove <Player1> <Player2> <Player3> ...");
+                        } else if (args[0].equals("version")) {
+                            player.sendMessage(ChatColor.BLUE + "Version: " + ChatColor.GOLD
+                                    + this.getVersion() + " \n" + ChatColor.BLUE + "Made by "
+                                    + ChatColor.GOLD + "M0P\n" + ChatColor.BLUE
+                                    + "Based on Bukkit Plugin \"SignLift\" \n" + "Thanks to "
+                                    + ChatColor.GOLD + "AquaXV" + ChatColor.BLUE
+                                    + "for helping and testing alot.");
+                        } else if (args[0].equals("help")) {
+                            //TODO
+                            player.sendMessage(ChatColor.BLUE + "www.minecraftserver.com/forum/wiki/pvp-server-addons-signlift/");
                         }
                     }
-                } else player.sendMessage("You have to select a sign lift first");
+                } else player.sendMessage(ChatColor.AQUA
+                        + "You have to select a sign lift first (sneak and right click it)");
 
         }
         return true;
@@ -237,6 +252,10 @@ public class ImprovedSignLift extends JavaPlugin {
      * (non-Javadoc)
      * @see org.bukkit.plugin.java.JavaPlugin#onEnable()
      */
+
+    private String getVersion() {
+        return "1.0.0";
+    }
 
     @Override
     public void onEnable() {

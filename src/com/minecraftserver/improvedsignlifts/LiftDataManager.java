@@ -52,7 +52,6 @@ public class LiftDataManager {
         File ownerFile = new File(dir + File.separator + ownerName);
         try {
             if (!ownerFile.exists()) {
-                Bukkit.broadcastMessage("no file found");
                 List<LiftData> list = new Vector<>();
                 saveLifts(list, ownerName);
             }
@@ -63,7 +62,6 @@ public class LiftDataManager {
             fis.close();
             return lifts;
         } catch (Exception e) {
-            Bukkit.broadcastMessage("error reading file:" + e);
             e.printStackTrace();
         }
         return null;
@@ -92,10 +90,8 @@ public class LiftDataManager {
 
     public static List<String> getMembersOfLift(Location loc, String ownerName) {
         List<LiftData> lifts = loadLifts(ownerName);
-        Bukkit.broadcastMessage("Load successfull?:" + lifts == null ? "N" : "Y");
         if (lifts != null) for (LiftData ld : lifts)
             if (ld.getLocation().equals(loc)) {
-                Bukkit.broadcastMessage("found the lift");
                 return ld.getMembers();
             }
         return null;
@@ -104,26 +100,19 @@ public class LiftDataManager {
     public static boolean isMemberOfLift(Location loc, String ownerName, String playerName) {
         List<LiftData> lifts = loadLifts(ownerName);
         if (lifts != null) for (LiftData ld : lifts)
-            if (ld.getLocation().equals(loc)) {
-                return ld.getMembers().contains(playerName);
+            if (ld.getLocation().equals(loc) && ld.getMembers() != null) {
+                return ld.getMembers().contains(playerName.toLowerCase());
             }
         return false;
     }
 
     public static void addMemberToLift(Location loc, String ownerName, String playerName) {
-        Bukkit.broadcastMessage("trying to load lifts");
         List<LiftData> lifts = loadLifts(ownerName);
         if (lifts != null) {
-            Bukkit.broadcastMessage("Loaded successfulll");
             for (LiftData ld : lifts) {
-                Bukkit.broadcastMessage("Current Lift Location:" + ld.getLocation().getBlockX()
-                        + ", " + ld.getLocation().getBlockY() + ", " + ld.getLocation().getBlockZ());
-                Bukkit.broadcastMessage("Current Sign Location:" + loc.getBlockX() + ", "
-                        + loc.getBlockY() + ", " + loc.getBlockZ());
                 if (ld.getLocation().equals(loc)) {
-                    Bukkit.broadcastMessage("Found lift at: " + ld.getLocation().getBlockX());
                     lifts.remove(ld);
-                    ld.addMember(playerName);
+                    ld.addMember(playerName.toLowerCase());
                     lifts.add(ld);
                     break;
                 }
@@ -137,7 +126,7 @@ public class LiftDataManager {
         if (lifts != null) for (LiftData ld : lifts)
             if (ld.getLocation().equals(loc)) {
                 lifts.remove(ld);
-                ld.remMember(playerName);
+                ld.remMember(playerName.toLowerCase());
                 lifts.add(ld);
                 break;
             }

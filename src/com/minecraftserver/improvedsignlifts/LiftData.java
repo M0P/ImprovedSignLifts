@@ -37,6 +37,6 @@ public class LiftData implements Serializable {
     }
 
     public void remMember(String memberName) {
-        if (members.contains(memberName) && members != null) members.remove(memberName);
+        if (members != null &&  members.contains(memberName)) members.remove(memberName);
     }
 }
