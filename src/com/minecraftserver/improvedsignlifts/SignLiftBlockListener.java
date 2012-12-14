@@ -31,7 +31,7 @@ public class SignLiftBlockListener implements Listener {
         BlockFace[] faces = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST,
                 BlockFace.UP };
 
-        if (block.getType() == Material.SIGN||block.getType() == Material.WALL_SIGN) {
+        if (block.getType() == Material.SIGN || block.getType() == Material.WALL_SIGN) {
             if (plugin.isBlockSignLift(block)) canBreak = canBreakBlock(block, player);
             isSign = true;
         } else {
@@ -87,11 +87,13 @@ public class SignLiftBlockListener implements Listener {
             Player player = event.getPlayer();
             event.setLine(3, plugin.shortPlayerName(player.getName()));
             if (isPrivate) {
-                if (player.hasPermission("signlift.create.private.own")) {
+                if (player.hasPermission("signlift.user.create.private.own")
+                        || player.hasPermission("signlift.admin") || player.isOp()) {
                     LiftDataManager.addLift(event.getBlock().getLocation(), player.getName());
                     return;
                 }
-            } else if (player.hasPermission("signlift.create.normal")) {
+            } else if (player.hasPermission("signlift.user.create.normal")
+                    || player.hasPermission("signlift.admin") || player.isOp()) {
                 return;
             }
             player.sendMessage(plugin.getDeniedCreate());
@@ -139,7 +141,8 @@ public class SignLiftBlockListener implements Listener {
     private boolean canBreakBlock(Block block, Player player) {
         Sign sign = (Sign) block.getState();
         String lineOwner = sign.getLine(3).toString();
-        if (lineOwner.equals(plugin.shortPlayerName(player.getName()))) {
+        if (lineOwner.equals(plugin.shortPlayerName(player.getName()))
+                || player.hasPermission("signlift.admin") || player.isOp()) {
             return true;
         } else {
             return false;

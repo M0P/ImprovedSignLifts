@@ -1,43 +1,43 @@
 name: ImprovedSignLift
 main: com.minecraftserver.improvedsignlifts.ImprovedSignLift
 website: http://www.minecraftserver.com/
-version: 1.02
+version: 1.03
 author: M0P
 commands:
     sl:
     
 permissions:
-    signlift.*:
+    signlift.user.*:
         description: Gives access to all SignLift privileges
         children:
-            signlift.create.*: true
-            signlift.use.normal: true
-            signlift.use.private.own: true
-            signlift.use.private.other: true 
-    signlift.create.*:
+            signlift.user.create.*: true
+            signlift.user.modify.private.member: true
+            signlift.user.use.normal: true
+            signlift.user.use.private.own: true
+            signlift.user.use.private.other: true 
+    signlift.user.create.*:
         description: Gives access to all SignLift create privileges
         children:
-            signlift.create.normal: true
-            signlift.create.private.own: true
-            signlift.create.private.other: true
-    signlift.create.normal:
+            signlift.user.create.normal: true
+            signlift.user.create.private.own: true
+    signlift.user.create.normal:
         description: Permits the creation of a normal sign lifts for anyone to use
         default: true
-    signlift.create.private.own:
+    signlift.user.create.private.own:
         description: Permits the creation of private sign lifts with the PRIVATE tag
         default: true
-    signlift.modify.private.member:
+    signlift.user.modify.private.member:
         description: Permits the modification of private sign lifts (adding/removing member)
         default: true
-    signlift.use.normal:
+    signlift.user.use.normal:
         description: Permits the use of any normal sign lift
         default: true
-    signlift.use.private.own:
+    signlift.user.use.private.own:
         description: Permits the use of any private sign lift made for this user
         default: true
-    signlift.use.private.others:
+    signlift.user.use.private.others:
         description: Permits the use of any private sign lift where player is member
         default: true
-    signlift.use.all:
-        description: Permits the use of any sign lift
+    signlift.admin:
+        description: Permits the use/creation/destruction of any sign lift
         default: op

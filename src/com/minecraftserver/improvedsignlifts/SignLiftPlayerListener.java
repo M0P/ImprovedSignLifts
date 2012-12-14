@@ -47,7 +47,9 @@ public class SignLiftPlayerListener implements Listener {
                         Player player = event.getPlayer();
                         if (plugin.shortPlayerName(player.getName()).equals(
                                 sign.getLine(3).toString())
-                                && plugin.isSignLiftPrivate(block)) {
+                                && plugin.isSignLiftPrivate(block)
+                                && (player.hasPermission("signlift.user.modify.private.member")
+                                        || player.hasPermission("signlift.admin") || player.isOp())) {
                             // TODO
                             player.sendMessage(ChatColor.BLUE + "Sign Lift Edit Mode");
                             List<String> memberList = LiftDataManager.getMembersOfLift(
@@ -62,7 +64,8 @@ public class SignLiftPlayerListener implements Listener {
                                     + ChatColor.BLUE + " or" + ChatColor.GOLD + " /sl remove"
                                     + ChatColor.BLUE + " to modify the members");
                             plugin.addSignEditStatus(player, sign);
-                        } else player.sendMessage(ChatColor.RED+"You dont have permission to edit this lift");
+                        } else player.sendMessage(ChatColor.RED
+                                + "You dont have permission to edit this lift");
                     }
                 }
             }

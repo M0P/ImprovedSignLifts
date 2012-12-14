@@ -104,13 +104,13 @@ public class LiftSign {
 
     public boolean checkAllowed(Player player) {
         Location signLocation = this.sign.getLocation();
-        if ((!isPrivate && player.hasPermission("signlift.use.normal")) || player.isOp()
-                || player.hasPermission("signlift.use.all")) return true;
+        if ((!isPrivate && player.hasPermission("signlift.user.use.normal")) || player.isOp()
+                || player.hasPermission("signlift.admin")) return true;
         String playerName = player.getName();
         if (owner.equalsIgnoreCase(plugin.shortPlayerName(playerName))) {
-            return player.hasPermission("signlift.use.private.own");
+            return player.hasPermission("signlift.user.use.private.own");
         } else if (LiftDataManager.isMemberOfLift(signLocation, owner, player.getName())) {
-            return player.hasPermission("signlift.use.private.other");
+            return player.hasPermission("signlift.user.use.private.other");
         }
         return false;
     }
