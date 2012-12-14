@@ -25,7 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class ImprovedSignLift extends JavaPlugin {
     protected final static Logger        logger         = Logger.getLogger("Minecraft");
-    public static final String           name           = "SignLift";
+    public static final String           name           = "ImprovedSignLift";
 
     private final SignLiftBlockListener  blockListener  = new SignLiftBlockListener(this);
     private final SignLiftPlayerListener playerListener = new SignLiftPlayerListener(this);
@@ -205,7 +205,7 @@ public class ImprovedSignLift extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (cmd.getName().equalsIgnoreCase("sl"))
+            if (cmd.getName().equalsIgnoreCase("sl")) {
                 if (hasPlayerSignEditStatus(player)) {
                     Location loc = signEditStatus.get(player.getName());
                     if (args.length != 0) {
@@ -229,20 +229,21 @@ public class ImprovedSignLift extends JavaPlugin {
                                     }
                             } else player.sendMessage(ChatColor.AQUA
                                     + "Usage: /sl remove <Player1> <Player2> <Player3> ...");
-                        } else if (args[0].equals("version")) {
-                            player.sendMessage(ChatColor.BLUE + "Version: " + ChatColor.GOLD
-                                    + this.getVersion() + " \n" + ChatColor.BLUE + "Made by "
-                                    + ChatColor.GOLD + "M0P\n" + ChatColor.BLUE
-                                    + "Based on Bukkit Plugin \"SignLift\" \n" + "Thanks to "
-                                    + ChatColor.GOLD + "AquaXV" + ChatColor.BLUE
-                                    + "for helping and testing alot.");
-                        } else if (args[0].equals("help")) {
-                            //TODO
-                            player.sendMessage(ChatColor.BLUE + "www.minecraftserver.com/forum/wiki/pvp-server-addons-signlift/");
                         }
                     }
-                } else player.sendMessage(ChatColor.AQUA
-                        + "You have to select a sign lift first (sneak and right click it)");
+                }
+            } else if (args[0].equals("version")) {
+                player.sendMessage(ChatColor.BLUE + "Version: " + ChatColor.GOLD
+                        + this.getVersion() + " \n" + ChatColor.BLUE + "Made by " + ChatColor.GOLD
+                        + "M0P\n" + ChatColor.BLUE + "Based on Bukkit Plugin \"SignLift\" \n"
+                        + "Thanks to " + ChatColor.GOLD + "AquaXV" + ChatColor.BLUE
+                        + "for helping and testing alot.");
+            } else if (args[0].equals("help")) {
+                // TODO
+                player.sendMessage(ChatColor.BLUE
+                        + "www.minecraftserver.com/forum/wiki/pvp-server-addons-signlift/");
+            } else player.sendMessage(ChatColor.AQUA
+                    + "You have to select a sign lift first (sneak and right click it)");
 
         }
         return true;
@@ -254,12 +255,11 @@ public class ImprovedSignLift extends JavaPlugin {
      */
 
     private String getVersion() {
-        return "1.0.0";
+        return this.getDescription().getVersion();
     }
 
     @Override
     public void onEnable() {
-        PluginDescriptionFile pdfFile = this.getDescription();
         PluginManager pm = getServer().getPluginManager();
 
         loadConfiguration();
@@ -270,7 +270,7 @@ public class ImprovedSignLift extends JavaPlugin {
 
         LiftDataManager.init(this);
 
-        log("Improved Sign Lifts - Version " + pdfFile.getVersion() + " is enabled");
+        log("Improved Sign Lifts - Version " + getVersion() + " is enabled");
 
     }
 
