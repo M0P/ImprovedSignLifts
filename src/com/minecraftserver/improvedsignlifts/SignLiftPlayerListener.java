@@ -45,11 +45,11 @@ public class SignLiftPlayerListener implements Listener {
                         plugin.executeSignLiftAction(sign, event.getPlayer());
                     else {
                         Player player = event.getPlayer();
-                        if (plugin.shortPlayerName(player.getName()).equals(
-                                sign.getLine(3).toString())
-                                && plugin.isSignLiftPrivate(block)
-                                && (player.hasPermission("signlift.user.modify.private.member")
-                                        || player.hasPermission("signlift.admin") || player.isOp())) {
+                        if (plugin.isSignLiftPrivate(block)
+                                && (plugin.shortPlayerName(player.getName()).equals(
+                                        sign.getLine(3).toString()) && player
+                                        .hasPermission("signlift.user.modify.private.member"))
+                                || (player.hasPermission("signlift.admin") || player.isOp())) {
                             // TODO
                             player.sendMessage(ChatColor.BLUE + "Sign Lift Edit Mode");
                             List<String> memberList = LiftDataManager.getMembersOfLift(

@@ -177,18 +177,6 @@ public class ImprovedSignLift extends JavaPlugin {
         if (signEditStatus.containsKey(player.getName()))
             signEditStatus.remove(player.getName());
         else signEditStatus.put(player.getName(), sign.getLocation());
-        this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-            @Override
-            public void run() {
-                remSignEditStatus(player, sign);
-            }
-        }, 1200L);
-        // 20=1 sec
-    }
-
-    public void remSignEditStatus(Player player, Sign sign) {
-        if (signEditStatus.containsValue(sign.getLocation()))
-            signEditStatus.remove(player.getName());
     }
 
     public boolean hasPlayerSignEditStatus(Player player) {
@@ -231,19 +219,20 @@ public class ImprovedSignLift extends JavaPlugin {
                                     + "Usage: /sl remove <Player1> <Player2> <Player3> ...");
                         }
                     }
-                }
-            } else if (args[0].equals("version")) {
-                player.sendMessage(ChatColor.BLUE + "Version: " + ChatColor.GOLD
-                        + this.getVersion() + " \n" + ChatColor.BLUE + "Made by " + ChatColor.GOLD
-                        + "M0P\n" + ChatColor.BLUE + "Based on Bukkit Plugin \"SignLift\" \n"
-                        + "Thanks to " + ChatColor.GOLD + "AquaXV" + ChatColor.BLUE
-                        + "for helping and testing alot.");
-            } else if (args[0].equals("help")) {
-                // TODO
-                player.sendMessage(ChatColor.BLUE
-                        + "www.minecraftserver.com/forum/wiki/pvp-server-addons-signlift/");
-            } else player.sendMessage(ChatColor.AQUA
-                    + "You have to select a sign lift first (sneak and right click it)");
+                } else if (args.length > 0 && args[0].equals("version")) {
+                    player.sendMessage(ChatColor.BLUE + "Version: " + ChatColor.GOLD
+                            + this.getVersion() + " \n" + ChatColor.BLUE + "Made by "
+                            + ChatColor.GOLD + "M0P\n" + ChatColor.BLUE
+                            + "Based on Bukkit Plugin \"SignLift\" \n" + "Thanks to "
+                            + ChatColor.GOLD + "AquaXV" + ChatColor.BLUE
+                            + " for helping and testing alot.");
+                } else if (args.length > 0 && args[0].equals("help")) {
+                    // TODO
+                    player.sendMessage(ChatColor.BLUE
+                            + "www.minecraftserver.com/forum/wiki/pvp-server-addons-signlift/");
+                } else player.sendMessage(ChatColor.AQUA
+                        + "You have to select a sign lift first (sneak and right click it)");
+            }
 
         }
         return true;
