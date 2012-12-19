@@ -25,6 +25,7 @@ public class SignLiftPlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (!event.hasBlock()) return;
+        plugin.remSignEditStatus(event.getPlayer());
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getClickedBlock().getType() == Material.STONE_BUTTON
                     || event.getClickedBlock().getType() == Material.WOOD_BUTTON) {

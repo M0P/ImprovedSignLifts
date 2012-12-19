@@ -174,9 +174,11 @@ public class ImprovedSignLift extends JavaPlugin {
     }
 
     public void addSignEditStatus(final Player player, final Sign sign) {
-        if (signEditStatus.containsKey(player.getName()))
-            signEditStatus.remove(player.getName());
-        else signEditStatus.put(player.getName(), sign.getLocation());
+        signEditStatus.put(player.getName(), sign.getLocation());
+    }
+
+    public void remSignEditStatus(final Player player) {
+        if (signEditStatus.containsKey(player.getName())) signEditStatus.remove(player.getName());
     }
 
     public boolean hasPlayerSignEditStatus(Player player) {
@@ -229,7 +231,15 @@ public class ImprovedSignLift extends JavaPlugin {
                 } else if (args.length > 0 && args[0].equals("help")) {
                     // TODO
                     player.sendMessage(ChatColor.BLUE
-                            + "www.minecraftserver.com/forum/wiki/pvp-server-addons-signlift/");
+                            + "To create a public SignLift place a sign and add " + ChatColor.GOLD
+                            + "[Lift up]" + ChatColor.BLUE + ", " + ChatColor.GOLD + "[Lift down]"
+                            + ChatColor.BLUE + " or " + ChatColor.GOLD + "[Lift]" + ChatColor.BLUE
+                            + " to the second line of the sign \n" + "Using " + ChatColor.GOLD
+                            + "{ }" + ChatColor.BLUE
+                            + " brackets instead creates a private SignLift \n"
+                            + "You can add members to private SignLifts through " + ChatColor.GOLD
+                            + "sneaking and right clicking the sign \n" + ChatColor.BLUE
+                            + "You can find more help at the wiki or ask a Deity/Oracle ingame.");
                 } else player.sendMessage(ChatColor.AQUA
                         + "You have to select a sign lift first (sneak and right click it)");
             }
