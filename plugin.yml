@@ -1,8 +1,8 @@
 name: ImprovedSignLift
 main: com.minecraftserver.improvedsignlifts.ImprovedSignLift
 website: http://www.minecraftserver.com/
-version: 1.08
-author: M0P
+version: 1.09
+author: M0P, AquaXV
 commands:
     sl:
     
@@ -35,7 +35,7 @@ permissions:
     signlift.user.use.private.own:
         description: Permits the use of any private sign lift made for this user
         default: true
-    signlift.user.use.private.others:
+    signlift.user.use.private.other:
         description: Permits the use of any private sign lift where player is member
         default: true
     signlift.admin:
