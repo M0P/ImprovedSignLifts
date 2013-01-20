@@ -2,8 +2,6 @@ package com.minecraftserver.improvedsignlifts;
 
 import java.io.Serializable;
 
-import org.bukkit.World;
-
 public class LocationSerializable implements Serializable {
     private static final long serialVersionUID = 1L;
     public String             world;

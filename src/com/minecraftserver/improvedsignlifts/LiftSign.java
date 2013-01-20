@@ -15,7 +15,6 @@
 
 package com.minecraftserver.improvedsignlifts;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -24,31 +23,17 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.List;
-import java.util.Vector;
-
 public class LiftSign {
-    static private ImprovedSignLift plugin;
+    private static ImprovedSignLift plugin;
 
     public enum Direction {
         UP, DOWN, NONE
     };
 
-    private Block        block;
     private Sign         sign;
     private String       label;
     private Direction    direction;
     private String       owner     = "";
-    private List<String> members   = new Vector<>();
     private Boolean      isPrivate = false;
 
     static public void init(ImprovedSignLift parent) {
@@ -56,7 +41,7 @@ public class LiftSign {
     }
 
     public LiftSign(Sign sign, ImprovedSignLift plugin) {
-        this.plugin = plugin;
+        LiftSign.plugin = plugin;
         this.sign = sign;
         String lineDirection = this.sign.getLine(1);
 

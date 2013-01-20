@@ -1,21 +1,14 @@
 package com.minecraftserver.improvedsignlifts;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.security.acl.Owner;
 import java.util.List;
 import java.util.Vector;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 
 public class LiftDataManager {
     static private ImprovedSignLift plugin;
@@ -57,6 +50,7 @@ public class LiftDataManager {
             }
             FileInputStream fis = new FileInputStream(ownerFile);
             ObjectInputStream ois = new ObjectInputStream(fis);
+            @SuppressWarnings("unchecked")
             List<LiftData> lifts = (List<LiftData>) ois.readObject();
             ois.close();
             fis.close();

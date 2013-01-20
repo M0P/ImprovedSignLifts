@@ -21,6 +21,7 @@ public class SignLiftBlockListener implements Listener {
         plugin = instance;
     }
 
+    @SuppressWarnings("deprecation")
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
