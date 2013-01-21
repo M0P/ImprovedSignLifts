@@ -13,3 +13,21 @@ string:
 check:
     destination:
         paranoid: true
+upm: true
+upm_update: http://www.pvp.mcs.square7.ch/improvedsignlifts.json
+upm_configtype:
+    string:
+        lift: string
+        down:
+            lift: string
+        normal:
+            open: string
+            close: string
+        private:
+            open: string
+            close: string
+        up:
+            lift: string
+    check:
+        destination:
+            paranoid: boolean

@@ -1,0 +1,7 @@
+{
+  "versions": {
+    "version": "1.10",
+    "download": "http://www.pvp.mcs.square7.ch/ImprovedSignLifts.jar"
+    "changelog": "Added UPM support"
+  }
+}

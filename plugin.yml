@@ -1,7 +1,7 @@
 name: ImprovedSignLift
 main: com.minecraftserver.improvedsignlifts.ImprovedSignLift
 website: http://www.minecraftserver.com/
-version: 1.09
+version: 1.10
 author: M0P, AquaXV
 commands:
     sl:
