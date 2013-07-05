@@ -24,17 +24,18 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 public class LiftSign {
+
     private static ImprovedSignLift plugin;
 
     public enum Direction {
         UP, DOWN, NONE
-    };
+    }
 
-    private Sign         sign;
-    private String       label;
-    private Direction    direction;
-    private String       owner     = "";
-    private Boolean      isPrivate = false;
+    private Sign      sign;
+    private String    label;
+    private Direction direction;
+    private String  owner     = "";
+    private Boolean isPrivate = false;
 
     static public void init(ImprovedSignLift parent) {
         plugin = parent;
@@ -45,11 +46,10 @@ public class LiftSign {
         this.sign = sign;
         String lineDirection = this.sign.getLine(1);
 
-        if (lineDirection.startsWith(plugin.getNormalOpen())
-                && lineDirection.endsWith(plugin.getNormalClose())) {
+        if(lineDirection.startsWith(plugin.getNormalOpen()) && lineDirection.endsWith(plugin.getNormalClose())) {
             this.isPrivate = false;
-        } else if (lineDirection.startsWith(plugin.getPrivateOpen())
-                && lineDirection.endsWith(plugin.getPrivateClose())) {
+        }
+        else if(lineDirection.startsWith(plugin.getPrivateOpen()) && lineDirection.endsWith(plugin.getPrivateClose())) {
             this.owner = this.sign.getLine(3);
             this.isPrivate = true;
         }
@@ -57,27 +57,24 @@ public class LiftSign {
         // Remove the prefix and suffix
         lineDirection = lineDirection.substring(1, lineDirection.length() - 1);
 
-        if (lineDirection.equalsIgnoreCase(plugin.getLiftString())) {
+        if(lineDirection.equalsIgnoreCase(plugin.getLiftString())) {
             this.direction = Direction.NONE;
-            this.sign.setLine(
-                    1,
-                    (isPrivate ? plugin.getPrivateOpen() : plugin.getNormalOpen())
-                            + plugin.getLiftString()
-                            + (isPrivate ? plugin.getPrivateClose() : plugin.getNormalClose()));
-        } else if (lineDirection.equalsIgnoreCase(plugin.getLiftUpString())) {
+            this.sign.setLine(1,
+                              (isPrivate ? plugin.getPrivateOpen() : plugin.getNormalOpen()) + plugin.getLiftString()
+                                      + (isPrivate ? plugin.getPrivateClose() : plugin.getNormalClose()));
+        }
+        else if(lineDirection.equalsIgnoreCase(plugin.getLiftUpString())) {
             this.direction = Direction.UP;
-            this.sign.setLine(
-                    1,
-                    (isPrivate ? plugin.getPrivateOpen() : plugin.getNormalOpen())
-                            + plugin.getLiftUpString()
-                            + (isPrivate ? plugin.getPrivateClose() : plugin.getNormalClose()));
-        } else if (lineDirection.equalsIgnoreCase(plugin.getLiftDownString())) {
+            this.sign.setLine(1,
+                              (isPrivate ? plugin.getPrivateOpen() : plugin.getNormalOpen()) + plugin.getLiftUpString
+                                                                                                              () +
+                                      (isPrivate ? plugin.getPrivateClose() : plugin.getNormalClose()));
+        }
+        else if(lineDirection.equalsIgnoreCase(plugin.getLiftDownString())) {
             this.direction = Direction.DOWN;
-            this.sign.setLine(
-                    1,
-                    (isPrivate ? plugin.getPrivateOpen() : plugin.getNormalOpen())
-                            + plugin.getLiftDownString()
-                            + (isPrivate ? plugin.getPrivateClose() : plugin.getNormalClose()));
+            this.sign.setLine(1,
+                              (isPrivate ? plugin.getPrivateOpen() : plugin.getNormalOpen()) + plugin
+                                                                                                       .getLiftDownString() + (isPrivate ? plugin.getPrivateClose() : plugin.getNormalClose()));
         }
 
         this.label = this.sign.getLine(0);
@@ -89,63 +86,66 @@ public class LiftSign {
 
     public boolean checkAllowed(Player player) {
         Location signLocation = this.sign.getLocation();
-        if ((!isPrivate && player.hasPermission("signlift.user.use.normal")) || player.isOp()
-                || player.hasPermission("signlift.admin")) return true;
+        if((!isPrivate && player.hasPermission("signlift.user.use.normal")) || player.isOp() || player.hasPermission
+                                                                                                               ("signlift.admin"))
+            return true;
         String playerName = player.getName();
-        if (owner.equalsIgnoreCase(plugin.shortPlayerName(playerName))) {
+        if(owner.equalsIgnoreCase(plugin.shortPlayerName(playerName))) {
             return player.hasPermission("signlift.user.use.private.own");
-        } else if (LiftDataManager.isMemberOfLift(signLocation, owner, player.getName())) {
+        }
+        else if(LiftDataManager.isMemberOfLift(signLocation, owner, player.getName())) {
             return player.hasPermission("signlift.user.use.private.other");
         }
         return false;
     }
 
     public boolean activate(Player player) {
-        if (this.direction == Direction.NONE) {
+        if(this.direction == Direction.NONE) {
             return false;
         }
-        if (!this.checkAllowed(player)) {
+        if(!this.checkAllowed(player)) {
             player.sendMessage(plugin.getDeniedLift());
             return false;
         }
         int skipSigns = 0;
         Location loc = player.getLocation();
         LiftSign target = this.findSign(skipSigns);
-        if (target == null) return false;
-        while (target != null && !(target.checkAllowed(player))) {
+        if(target == null) return false;
+        while(target != null && !(target.checkAllowed(player))) {
             skipSigns++;
             target = this.findSign(skipSigns);
         }
-        if (target == null) {
+        if(target == null) {
             player.sendMessage(plugin.getDeniedLift());
             return false;
         }
         String destination = target.getLabel();
         String message;
-        if (destination.equals("")) {
+        if(destination.equals("")) {
             message = this.direction == Direction.UP ? plugin.getDefaultGoingUpString() : plugin
-                    .getDefaultGoingDownString();
-        } else {
-            message = String.format(
-                    this.direction == Direction.UP ? plugin.getGoingUpStringFormat() : plugin
-                            .getGoingDownStringFormat(), ChatColor.GOLD + destination);
+                                                                                                  .getDefaultGoingDownString();
+        }
+        else {
+            message = String.format(this.direction == Direction.UP ? plugin.getGoingUpStringFormat() : plugin
+                                                                                                               .getGoingDownStringFormat(),
+                                    ChatColor.GOLD + destination);
         }
 
         Block block0 = target.getTargetBlock(loc, 0);
         boolean safe = false;
-        if (block0.getY() < 128) {
+        if(block0.getY() < 128) {
             Block block1 = target.getTargetBlock(loc, 1);
             loc.setY(block0.getY());
             safe = this.safeBlock(block0) && this.safeBlock(block1);
         }
 
-        if (block0.getY() > 0 && !safe) {
+        if(block0.getY() > 0 && !safe) {
             Block block1 = target.getTargetBlock(loc, -1);
             loc.setY(block0.getY() - 1);
             safe = this.safeBlock(block0) && this.safeBlock(block1);
         }
 
-        if (safe) {
+        if(safe) {
             player.teleport(loc);
             player.sendMessage(message);
             return true;
@@ -164,34 +164,34 @@ public class LiftSign {
     }
 
     private Boolean safeBlock(Block block) {
-        switch (block.getType()) {
-        case AIR:
-        case BROWN_MUSHROOM:
-        case CROPS:
-        case DEAD_BUSH:
-        case DIODE_BLOCK_OFF:
-        case DIODE_BLOCK_ON:
-        case GLOWING_REDSTONE_ORE:
-        case LADDER:
-        case LEVER:
-        case LONG_GRASS:
-        case RED_MUSHROOM:
-        case RED_ROSE:
-        case REDSTONE_ORE:
-        case SIGN:
-        case SIGN_POST:
-        case STATIONARY_WATER:
-        case STONE_BUTTON:
-        case STONE_PLATE:
-        case SUGAR_CANE_BLOCK:
-        case TORCH:
-        case WALL_SIGN:
-        case WATER:
-        case WOOD_PLATE:
-        case YELLOW_FLOWER:
-            return true;
-        default:
-            return false;
+        switch(block.getType()) {
+            case AIR:
+            case BROWN_MUSHROOM:
+            case CROPS:
+            case DEAD_BUSH:
+            case DIODE_BLOCK_OFF:
+            case DIODE_BLOCK_ON:
+            case GLOWING_REDSTONE_ORE:
+            case LADDER:
+            case LEVER:
+            case LONG_GRASS:
+            case RED_MUSHROOM:
+            case RED_ROSE:
+            case REDSTONE_ORE:
+            case SIGN:
+            case SIGN_POST:
+            case STATIONARY_WATER:
+            case STONE_BUTTON:
+            case STONE_PLATE:
+            case SUGAR_CANE_BLOCK:
+            case TORCH:
+            case WALL_SIGN:
+            case WATER:
+            case WOOD_PLATE:
+            case YELLOW_FLOWER:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -200,29 +200,26 @@ public class LiftSign {
         World world = this.sign.getWorld();
         int x = this.sign.getX(), y = this.sign.getY(), z = this.sign.getZ();
         int d;
-        switch (this.direction) {
-        case UP:
-            d = 1;
-            break;
-        case DOWN:
-            d = -1;
-            break;
-        default:
-            return null;
+        switch(this.direction) {
+            case UP:
+                d = 1;
+                break;
+            case DOWN:
+                d = -1;
+                break;
+            default:
+                return null;
         }
 
-        for (int h = world.getMaxHeight(), y1 = y + d; y1 < h && y1 > 0; y1 += d) {
+        for(int h = world.getMaxHeight(), y1 = y + d; y1 < h && y1 > 0; y1 += d) {
             Block block = world.getBlockAt(x, y1, z);
             BlockState blockState = block.getState();
-            if (blockState instanceof Sign) {
+            if(blockState instanceof Sign) {
                 String line = ((Sign) blockState).getLine(1);
-                if (line.length() > 2) {
+                if(line.length() > 2) {
                     line = line.substring(1, line.length() - 1);
-                    if (line.equalsIgnoreCase(plugin.getLiftString())
-                            || line.equalsIgnoreCase(plugin.getLiftUpString())
-                            || line.equalsIgnoreCase(plugin.getLiftDownString())) {
-                        if (signCounter == skipSigns)
-                            return new LiftSign((Sign) blockState, plugin);
+                    if(line.equalsIgnoreCase(plugin.getLiftString()) || line.equalsIgnoreCase(plugin.getLiftUpString()) || line.equalsIgnoreCase(plugin.getLiftDownString())) {
+                        if(signCounter == skipSigns) return new LiftSign((Sign) blockState, plugin);
                         signCounter++;
                     }
                 }
